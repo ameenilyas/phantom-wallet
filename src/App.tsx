@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Switch, Route, useHistory } from "react-router-dom";
+
 import ConnectWallet from "./ConnectWallet";
 import MintToken from "./MintToken";
 import { useToasts } from "react-toast-notifications";
 
 function App() {
   const [walletKey, setWalletKey] = useState<string>("API_KEY");
-  const navigate = useNavigate();
+  const history = useHistory();
   const { addToast } = useToasts();
 
   useEffect(() => {
-    if (walletKey.length < 8) return navigate("/");
+    if (walletKey.length < 8) return history.replace("/");
     addToast("Connected Successfully", {
       appearance: "success",
       autoDismiss: true,
     });
-    navigate("/token-options");
-  }, [walletKey, navigate, addToast]);
+    history.replace("/token-options");
+  }, [walletKey, history, addToast]);
 
   function connectWallet(publicKey: string) {
     setWalletKey(publicKey);
@@ -24,16 +25,15 @@ function App() {
 
   return (
     <main>
-      <Routes>
-        <Route
-          path="/"
-          element={<ConnectWallet setToWallet={connectWallet} />}
-        />
-        <Route
-          path="/token-options"
-          element={<MintToken walletKey={walletKey} />}
-        />
-      </Routes>
+      <Switch>
+        <Route exact path="/">
+          <ConnectWallet setToWallet={connectWallet} />
+        </Route>
+
+        <Route exact path="/token-options">
+          <MintToken walletKey={walletKey} />
+        </Route>
+      </Switch>
     </main>
   );
 }

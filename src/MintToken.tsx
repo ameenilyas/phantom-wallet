@@ -15,27 +15,27 @@ import {
   getAccount,
 } from "@solana/spl-token";
 import "./App.css";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useEffect } from "react";
-
-// Special setup to add a Buffer class, because it's missing
-window.Buffer = window.Buffer || require("buffer").Buffer;
 
 interface Props {
   walletKey: string;
 }
 
+// Special setup to add a Buffer class, because it's missing
+window.Buffer = window.Buffer || require("buffer").Buffer;
+
+let mint: PublicKey;
+let fromTokenAccount: Account;
 function MintToken({ walletKey }: Props) {
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
   const fromWallet = Keypair.generate();
-  let mint: PublicKey;
-  let fromTokenAccount: Account;
   const toWallet = new PublicKey(walletKey);
-  const navigate = useNavigate();
+  const history = useHistory();
 
   useEffect(() => {
-    if (walletKey.length < 8) return navigate("/");
-  }, [walletKey, navigate]);
+    if (walletKey.length < 8) return history.replace("/");
+  }, [walletKey, history]);
 
   async function createToken() {
     const fromAirdropSignature = await connection.requestAirdrop(
