@@ -38,9 +38,9 @@ function ConnectWallet({ setToWallet }: Props) {
   const [provider, setProvider] = useState<PhantomProvider | undefined>(
     undefined
   );
-  const [walletKey, setWalletKey] = useState<PhantomProvider | undefined>(
-    undefined
-  );
+  // const [walletKey, setWalletKey] = useState<PhantomProvider | undefined>(
+  //   undefined
+  // );
 
   // detect phantom provider exists
   useEffect(() => {
@@ -73,7 +73,7 @@ function ConnectWallet({ setToWallet }: Props) {
         const response = await solana.connect();
         console.log("wallet account ", response.publicKey.toString());
         setToWallet(response.publicKey.toString());
-        setWalletKey(response.publicKey.toString());
+        // setWalletKey(response.publicKey.toString());
       } catch (err) {
         // { code: 4001, message: 'User rejected the request.' }
       }
@@ -85,7 +85,7 @@ function ConnectWallet({ setToWallet }: Props) {
       <header className="App-header">
         {/* <h2>Connect to Phantom Wallet</h2> */}
 
-        {provider && (
+        {provider ? (
           <button
             style={{
               fontSize: "16px",
@@ -98,9 +98,7 @@ function ConnectWallet({ setToWallet }: Props) {
           >
             Connect to Phantom Wallet
           </button>
-        )}
-
-        {!provider && (
+        ) : (
           <p>
             No provider found. Install{" "}
             <a href="https://phantom.app/">Phantom Browser extension</a>

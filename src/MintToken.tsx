@@ -15,8 +15,6 @@ import {
   getAccount,
 } from "@solana/spl-token";
 import "./App.css";
-import { useHistory } from "react-router-dom";
-import { useEffect } from "react";
 
 interface Props {
   walletKey: string;
@@ -25,17 +23,12 @@ interface Props {
 // Special setup to add a Buffer class, because it's missing
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
-let mint: PublicKey;
-let fromTokenAccount: Account;
 function MintToken({ walletKey }: Props) {
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
   const fromWallet = Keypair.generate();
   const toWallet = new PublicKey(walletKey);
-  const history = useHistory();
-
-  useEffect(() => {
-    if (walletKey.length < 8) return history.replace("/");
-  }, [walletKey, history]);
+  let mint: PublicKey;
+  let fromTokenAccount: Account;
 
   async function createToken() {
     const fromAirdropSignature = await connection.requestAirdrop(
@@ -62,6 +55,7 @@ function MintToken({ walletKey }: Props) {
     );
 
     console.log(`Create Token Account: ${fromTokenAccount.address.toBase58()}`);
+    alert("Token Created");
   }
 
   async function mintToken() {
@@ -75,6 +69,7 @@ function MintToken({ walletKey }: Props) {
       10000000000
     );
     console.log(`Mint Signature: ${signature}`);
+    alert(`Mint Signature: ${signature}`);
   }
 
   async function checkBalance() {
@@ -88,6 +83,7 @@ function MintToken({ walletKey }: Props) {
       fromTokenAccount.address
     );
     console.log({ tokenAccountInfo });
+    alert(`You Current Balance: ${tokenAccountInfo.amount}`);
   }
 
   async function sendToken() {
@@ -99,6 +95,7 @@ function MintToken({ walletKey }: Props) {
       toWallet
     );
     console.log(`toTokenAccount: ${toTokenAccount.address}`);
+    console.log({ toTokenAccount });
 
     const signature = await transfer(
       connection,
@@ -110,6 +107,7 @@ function MintToken({ walletKey }: Props) {
     );
 
     console.log(`finished transfer with ${signature}`);
+    alert("Token has been sent. Check your Wallet.");
   }
 
   return (
